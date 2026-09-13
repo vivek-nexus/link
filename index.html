@@ -13,7 +13,7 @@
       margin: 0;
       background-color: #f9f9f9;
     }
-    .spinner {
+    .loader {
       border: 3px solid #e0e0e0;
       border-top: 3px solid #3498db;
       border-radius: 50%;
@@ -28,7 +28,8 @@
   </style>
 </head>
 <body>
-  <div class="spinner"></div>
+  <div id="loader"></div>
+  <p id="status"></p>
 
   <script>
     const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgraDNYExsp8h8Ybd2ISY0BfF58-5dbjnS9QlxIAifZo8Ihr-RIOhM9nrqOYUkY0k/exec"; 
@@ -44,11 +45,6 @@
                 urlParams.get("name") || 
                 urlParams.get("go") || 
                 Array.from(urlParams.keys())[0];
-
-      // 2. Fallback to standalone key-only param (e.g., ?github)
-      if (!key) {
-        key = Array.from(urlParams.keys())[0];
-      }
 
       if (key) {
         key = key.trim();
@@ -73,11 +69,11 @@
           window.location.href = data.target;
         } else {
           loaderEl.style.display = "none";
-          statusEl.textContent = "Link not found.";
+          statusEl.textContent = "Something went wrong.";
         }
       } catch (err) {
         loaderEl.style.display = "none";
-        statusEl.textContent = "Error resolving link.";
+        statusEl.textContent = "Something went wrong.";
       }
     }
 
