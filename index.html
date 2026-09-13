@@ -39,8 +39,11 @@
 
       const urlParams = new URLSearchParams(window.location.search);
       
-      // 1. First check explicit param
-      let key = urlParams.get("slug");
+      // 1. First check explicit param. Order: ?to= -> ?name= -> ?go= -> key-only (?github).
+      let key = urlParams.get("to") || 
+                urlParams.get("name") || 
+                urlParams.get("go") || 
+                Array.from(urlParams.keys())[0];
 
       // 2. Fallback to standalone key-only param (e.g., ?github)
       if (!key) {
