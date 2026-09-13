@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 1rem auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loader" class="spinner"></div>
+    <p id="status">Redirecting...</p>
+  </div>
+
+  <script>
+    const GAS_ENDPOINT = "YOUR_GAS_WEB_APP_URL_HERE"; 
+
+    async function handleRedirect() {
+      const statusEl = document.getElementById("status");
+      const loaderEl = document.getElementById("loader");
+
+      // Extract only the slug from the URL path
+      const key = window.location.pathname.replace(/^\/|\/$/g, "").trim();
+
+      if (!key) {
+        loaderEl.style.display = "none";
+        statusEl.textContent = "No slug provided in URL.";
+        return;
+      }
+
+      try {
+        const response = await fetch(GAS_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ key: key })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success" && data.target) {
+          window.location.href = data.target;
+        } else {
+          loaderEl.style.display = "none";
+          statusEl.textContent = "Link not found.";
+        }
+      } catch (err) {
+        loaderEl.style.display = "none";
+        statusEl.textContent = "Error resolving link.";
+      }
+    }
+
+    handleRedirect();
+  </script>
+</body>
+</html>
