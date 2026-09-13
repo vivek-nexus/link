@@ -51,12 +51,23 @@
       const statusEl = document.getElementById("status");
       const loaderEl = document.getElementById("loader");
 
-      // Extract only the slug from the URL path
-      const key = window.location.pathname.replace(/^\/|\/$/g, "").trim();
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // 1. First check explicit param
+      let key = urlParams.get("slug");
+
+      // 2. Fallback to standalone key-only param (e.g., ?github)
+      if (!key) {
+        key = Array.from(urlParams.keys())[0];
+      }
+
+      if (key) {
+        key = key.trim();
+      }
 
       if (!key) {
         loaderEl.style.display = "none";
-        statusEl.textContent = "No slug provided in URL.";
+        statusEl.textContent = "No query parameter provided.";
         return;
       }
 
